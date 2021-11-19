@@ -8,7 +8,8 @@ import (
 
 // Config 파라미터 처리
 type Config struct {
-	pid uint // 감시할 process의 pid
+	pid      uint   // 감시할 process의 pid
+	duration uint64 // 감시 주기 second
 }
 
 // Check conf 체크
@@ -23,6 +24,7 @@ func (p *Config) Check() {
 // Print Info 로그로 출력한다.
 func (p *Config) Print() {
 	fmt.Printf("PID: %d\n", p.pid)
+	fmt.Printf("Duration Second: %d\n", p.duration)
 }
 
 func usage() {
