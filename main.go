@@ -35,16 +35,15 @@ func main() {
 
 		nextTime := time.Now().Truncate(time.Second).Add(time.Second)
 
+		fsysInfo, err := pidusage.GetStat(int(conf.pid))
+		if err != nil {
+			panic(err)
+		}
+
+		sumInfo.CPU += fsysInfo.CPU
+		sumInfo.Memory += fsysInfo.Memory / 1024
+
 		if showTime.Before(nextTime) {
-
-			fsysInfo, err := pidusage.GetStat(int(conf.pid))
-			if err != nil {
-				panic(err)
-			}
-
-			sumInfo.CPU += fsysInfo.CPU
-			sumInfo.Memory += fsysInfo.Memory / 1024
-
 			Info.Printf("pcpu,rss: %.2f %.0f\n", sumInfo.CPU/float64(conf.duration), sumInfo.Memory/float64(conf.duration))
 			sumInfo = pidusage.SysInfo{}
 			showTime = showTime.Add(time.Second * time.Duration(conf.duration))
