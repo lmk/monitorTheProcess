@@ -15,7 +15,7 @@ type Config struct {
 // Check conf 체크
 func (p *Config) Check() {
 	if p.pid == 0 {
-		fmt.Println("Invaild PID!")
+		fmt.Println("Invalid PID!")
 		usage()
 		os.Exit(0)
 	}
@@ -28,6 +28,6 @@ func (p *Config) Print() {
 }
 
 func usage() {
-	fmt.Printf("Usage: %s arguement...\n", os.Args[0])
+	fmt.Printf("Usage: %s argument...\n", os.Args[0])
 	flag.PrintDefaults()
 }
