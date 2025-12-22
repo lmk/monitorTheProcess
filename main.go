@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
+	"io"
 	"os"
 	"time"
 
@@ -19,7 +19,7 @@ var conf Config
 func main() {
 
 	// 로거 초기화
-	InitLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+	InitLogger(io.Discard, os.Stdout, os.Stdout, os.Stderr)
 	Info.Println("Start App")
 
 	flag.Parse()
@@ -41,7 +41,7 @@ func main() {
 		}
 
 		sumInfo.CPU += fsysInfo.CPU
-		sumInfo.Memory += fsysInfo.Memory / 1024
+		sumInfo.Memory += fsysInfo.Memory
 
 		if showTime.Before(nextTime) {
 			Info.Printf("pcpu,rss: %.2f %.0f\n", sumInfo.CPU/float64(conf.duration), sumInfo.Memory/float64(conf.duration))
