@@ -29,6 +29,7 @@ func main() {
 	Info.Printf("ps -o pcpu,rss -p %d", conf.pid)
 
 	var sumInfo pidusage.SysInfo
+	var sampleCount uint64
 	showTime := time.Now().Truncate(time.Second).Add(time.Second * time.Duration(conf.duration))
 
 	for {
@@ -42,11 +43,16 @@ func main() {
 
 		sumInfo.CPU += fsysInfo.CPU
 		sumInfo.Memory += fsysInfo.Memory
+		sampleCount++
 
-		if showTime.Before(nextTime) {
-			Info.Printf("pcpu,rss: %.2f %.0f\n", sumInfo.CPU/float64(conf.duration), sumInfo.Memory/float64(conf.duration))
+		// 경계 시점 포함(>=)으로 판정하고 실제 샘플 수로 평균 계산
+		if !nextTime.Before(showTime) && sampleCount > 0 {
+			Info.Printf("pcpu,rss: %.2f %.0f\n", sumInfo.CPU/float64(sampleCount), sumInfo.Memory/float64(sampleCount))
 			sumInfo = pidusage.SysInfo{}
-			showTime = showTime.Add(time.Second * time.Duration(conf.duration))
+			sampleCount = 0
+			for !showTime.After(nextTime) {
+				showTime = showTime.Add(time.Second * time.Duration(conf.duration))
+			}
 		}
 		//Info.Printf("pcpu,rss: %.2f %.0f\n", fsysInfo.CPU, fsysInfo.Memory)
 		time.Sleep(time.Until(nextTime))
